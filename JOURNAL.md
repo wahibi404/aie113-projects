@@ -1,40 +1,29 @@
-# Project journal · سجل المشروع
+# سجل مشروع Raqib النهائي
 
-Copy this file into your group's repository and fill one entry per stage. Your agent can draft
-an entry; your group checks and edits it. Write in English or Arabic.
+**المجموعة:** عبدالله الوهيبي؛ تُضاف أسماء بقية أفراد المجموعة بعد مراجعتهم. مساعد الكود: Codex.  
+**المسار:** fraud. **المصدر:** `snow10100/aie113-projects`، دفتر `tracks/fraud/notebook.ipynb`.  
+**ملاحظة:** المشروع النهائي مختلف عن لابات `fraud-service` الستة.
 
-انسخ هذا الملف إلى مستودع مجموعتكم واكتبوا مدخلًا واحدًا لكل مرحلة. يمكن للوكيل كتابة مسودة،
-ثم تراجعها المجموعة وتعدّلها. اكتبوا بالعربية أو بالإنجليزية.
+## المرحلة 0: فهم البيانات والنموذج
+قرأنا دفتر المدرب والدليل. البيانات 284,807 عملية منها 492 احتيال. المدخلات V1..V28 وAmount وhour. التقسيم زمني 60/20/20، ونموذج HistGradientBoostingClassifier بإعدادات الدفتر. تحققنا من حجم البيانات والوسوم قبل التدريب. لا نعرف المعنى التجاري لأرقام V.
 
-**Group · المجموعة:** names, and who has the AI coding agent (which tool and model)
-**Track · المسار:** stocks / fraud / vision
-**Repository · المستودع:** link
+## المرحلة 1: فصل منطق النموذج
+أنشأنا `scripts/train.py` للتدريب و`raqib/service.py` للاستدلال. أعدنا التدريب على البيانات الأصلية؛ عتبة التحقق 0.4. حفظنا 5,000 درجة مرجعية من أول 5,000 صف في الاختبار، ومثال آخر خلية من الدفتر: الدرجة 0.9989502835107239 والسبب الأول V14. التغيير الافتراضي لمتغير واحد لا يثبت السببية.
 
----
+## المرحلة 2: FastAPI
+أنشأنا `/score` و`/health` و`/ready` و`/docs`. اختبرنا رفض مبلغ سالب أو V28 مفقود أو حقل زائد (422). `block` أولوية مراجعة بشرية عند 0.9، ولا يوقف بطاقة حقيقية.
 
-## Stage N: name of the stage · المرحلة
+## المرحلة 3: Docker
+أضفنا Dockerfile للتدريب أثناء البناء والتشغيل بحساب غير root، وCompose مع منفذ محلي وhealthcheck. الاتصال بـDocker daemon المحلي محجوب برسالة permission denied. لم نتحقق من بناء الصورة أو تشغيلها حتى الآن.
 
-**What we asked the agent · ما طلبناه من الوكيل**
-The key requests, in a few lines.
+## المرحلة 4: الاختبارات
+اختبارات حدود العتبة وHTTP وقياسات الاختبار و5,000 درجة مرجعية. آخر جزء زمني فيه 75 احتيالًا؛ التقطنا 56 من 67 تنبيهًا، precision=83.58% وrecall=74.67%. كسرنا الطلب عمدًا بمبلغ -1 وبحذف V28 فحصلنا على 422. كشف الاختبار خطأ في النموذج المزيف (list بدل ndarray)، وأصلحناه دون إضعاف شرط.
 
-**What it built · ما بناه**
-Files created or changed, each with one line on its purpose.
+## المرحلة 5: GitHub Actions
+أضفنا CI للتدريب والاختبارات وlint وبناء Docker وفحص `/ready`. لم تُشغّل Actions على GitHub بعد. يتطلب الفورك تفعيل Actions، ويمكن اشتراط نجاح CI في حماية فرع main من إعدادات GitHub.
 
-**What we checked, and what we saw · ما تحققنا منه وما رأيناه**
-Commands we ran, pages we opened, numbers we noted. Include one thing we broke on purpose.
+## المرحلة 6: الأسرار
+أضفنا فحص أسرار في Actions، واستثنينا `.env` والبيانات والنموذج من Git وDocker context. لا يوجد webhook أو سر حقيقي. إذا أضفنا webhook لاحقًا، يؤخذ رمزه من GitHub Environment أو مدير أسرار؛ لم نختبر OIDC أو SOPS.
 
-**What surprised us or went wrong · ما فاجأنا أو ما تعثرنا فيه**
-And how we found the cause.
-
-**How we would explain this stage to a colleague · كيف نشرح هذه المرحلة لزميل**
-Three to five sentences, in our own words.
-
-**Open questions · أسئلة ما زالت مفتوحة**
-
----
-
-Stages: 0 Track and model · 1 Clean architecture · 2 FastAPI endpoint · 3 Container ·
-4 Tests · 5 GitHub Actions · 6 Secrets · Extension: React front end (optional)
-
-المراحل: 0 المسار والنموذج · 1 المعمارية النظيفة · 2 نقطة نهاية FastAPI · 3 الحاوية ·
-4 الاختبارات · 5 GitHub Actions · 6 الأسرار · إضافة اختيارية: واجهة React
+## العرض والقيود
+واجهة React اختيارية؛ نستخدم `/docs` في العرض. بيانات 2013 تعليمية، وليست لاتخاذ قرار مصرفي فعلي. نشر المشروع ونتائج Docker وActions معلقة على إنشاء فورك المشروع الجديد.
