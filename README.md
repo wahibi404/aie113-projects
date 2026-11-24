@@ -109,3 +109,11 @@ Code quality, speed and the front end are not graded.
 والواجهة الأمامية لا تدخل في التقييم.
 
 </div>
+
+---
+
+## Raqib · تطبيق المجموعة لمسار الاحتيال
+
+[شرح المشروع وطريقة عرضه](PROJECT.ar.md) · [سجل المراحل والتحقق](JOURNAL.md)
+
+[منصة أكاديمية سدايا «أذكى X»](https://athkax.sdaia.gov.sa/) · [صفحة الدورة](https://aie113.ibrahimalshehri.sa/ar/)
