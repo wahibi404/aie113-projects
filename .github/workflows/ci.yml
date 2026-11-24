@@ -28,8 +28,8 @@ jobs:
           docker build -t raqib:ci .
           docker run -d --name raqib -p 127.0.0.1:8000:8000 raqib:ci
           for n in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8000/ready; then exit 0; fi
+            if curl --fail --silent http://127.0.0.1:8000/ready; then break; fi
             sleep 2
           done
-          docker logs raqib
-          exit 1
+          python -c 'import json; print(json.dumps(json.load(open("tests/golden.json"))["payment"]))' > /tmp/raqib-payment.json
+          curl --fail --silent -H 'Content-Type: application/json' -d @/tmp/raqib-payment.json http://127.0.0.1:8000/score | python -c 'import json,sys; result=json.load(sys.stdin); assert result["reasons"][0]["feature"] == "V14"; assert result["score"] > .99; print(result["decision"], result["score"])'
