@@ -20,7 +20,7 @@ OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q
 .venv/bin/uvicorn raqib.api:app --reload
 ```
 
-افتح `http://127.0.0.1:8000/docs` للتجربة، و`/ready` للتحقق من تحميل النموذج. يوجد مثال طلب كامل في `tests/golden.json` تحت `payment`. للحاوية: `docker compose up --build`، وبناءها يعيد تنزيل البيانات والتدريب، ويحتاج الإنترنت. تحقق بناء الصورة وتشغيل `/ready` في GitHub Actions، ويجري التحقق الإضافي من `/score` داخل الحاوية.
+افتح `http://127.0.0.1:8000/docs` للتجربة، و`/ready` للتحقق من تحميل النموذج. يوجد مثال طلب كامل في `tests/golden.json` تحت `payment`. للحاوية: `docker compose up --build`، وبناءها يعيد تنزيل البيانات والتدريب، ويحتاج الإنترنت. تحقق بناء الصورة وتشغيل `/ready` في GitHub Actions، وتحقق `/score` داخل الحاوية بنجاح في GitHub Actions.
 
 ## شرح العرض في دقيقة
 
